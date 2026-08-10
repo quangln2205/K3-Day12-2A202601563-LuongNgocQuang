@@ -36,7 +36,7 @@ trong khi `print("đã trả lời xong")` chỉ là một câu chữ không có
 
 ---
 
-### Câu 3 — Kích thước image (CP2)
+### Câu 3 — Kích thước image (CP2):
 
 Build cả hai phiên bản và ghi lại số đo thật:
 
