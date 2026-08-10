@@ -3,6 +3,8 @@
 Đưa một AI agent từ `localhost:8000` lên một địa chỉ công khai mà người khác
 gọi được, có bảo mật, có giới hạn chi phí, và không sập khi bạn deploy bản mới.
 
+[![CI](https://github.com/github/docs/actions/workflows/lint-code.yml/badge.svg)](https://github.com/github/docs/actions/workflows/lint-code.yml)
+
 ---
 
 ## ⚠️ Bài Làm Cá Nhân

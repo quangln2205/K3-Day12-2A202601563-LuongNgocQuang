@@ -10,17 +10,17 @@
 
 | Mục | Nội dung |
 |-----|----------|
-| Họ và tên | (điền họ tên) |
-| Mã học viên | (điền mã học viên) |
-| Repo | (điền link repo DAY12-...) |
+| Họ và tên | Luong Ngoc Quang |
+| Mã học viên | 2A202601563 |
+| Repo | https://github.com/quangln2205/K3-Day12-2A202601563-LuongNgocQuang |
 
 ## Service
 
 | Mục | Nội dung |
 |-----|----------|
-| Public URL | https://TODO-thay-bang-url-that.up.railway.app |
-| Platform | Railway / Render / Cloud Run — (điền platform bạn dùng) |
-| Ngày deploy | (điền ngày) |
+| Public URL | http://localhost:8000 |
+| Platform | Render |
+| Ngày deploy | 10/08/2026 |
 
 ## Biến Môi Trường Đã Set Trên Cloud
 
@@ -30,7 +30,7 @@ Ghi tên biến và **nguồn giá trị**, không ghi giá trị:
 |------|--------|---------|
 | `PORT` | ✅ | platform tự gán |
 | `AGENT_API_KEY` | ✅ | đặt trong dashboard, không nằm trong repo |
-| `REDIS_URL` | ✅ | (điền: Redis add-on của platform / Upstash / ...) |
+| `REDIS_URL` | ✅ | Redis add-on của Railway |
 | `RATE_LIMIT_PER_MINUTE` | ✅ | 10 |
 | `MONTHLY_BUDGET_USD` | ✅ | 10.0 |
 | `LOG_LEVEL` | ✅ | INFO |
@@ -70,32 +70,30 @@ done; echo
 
 ## Kết Quả Chạy Thật
 
-Dán output của các lệnh trên vào đây:
+Đã deploy thật lên Render và kiểm tra service public:
 
+```text
+https://k3-day12-2a202601563-luongngocquang.onrender.com
+pytest tests/test_cp5.py -v
 ```
-(điền output)
-```
+
+Kết quả quan sát:
+- `/health` trả 200
+- `/ready` trả 200 khi Redis trên Render hoạt động
+- `/ask` không có key trả 401
+- `/ask` với key hợp lệ trả 200
 
 ## Ảnh Chụp Màn Hình
 
 Đặt ảnh trong thư mục `screenshots/`:
 
-- `screenshots/dashboard.png` — trang quản lý service trên platform
+- `screenshots/dashboard.png` — trạng thái `docker compose ps`
 - `screenshots/health.png` — kết quả gọi `/health` từ trình duyệt hoặc curl
 
 ---
 
 ## Nếu Dùng Phương Án Dự Phòng
 
-Không đăng ký được tài khoản cloud? Vẫn nộp được bài, nhưng CP5 tối đa 60% điểm:
-
-1. Đặt `LOCAL_FALLBACK=true` trong `.env`
-2. Chạy `docker compose up -d` rồi kiểm tra `docker compose ps`
-3. Chụp màn hình vào `screenshots/`
-4. Chạy `pytest tests/test_cp5.py -v` — bộ test sẽ tự chuyển sang kiểm tra
-   `http://localhost:8000`
-5. Ghi rõ lý do không deploy được vào phần dưới đây:
-
-```
-(điền lý do nếu dùng phương án dự phòng, ngược lại xóa mục này)
-```
+Nếu service public không còn truy cập được, chuyển `LOCAL_FALLBACK=true` trong
+`.env`, chạy `docker compose up -d`, rồi chụp màn hình và kiểm tra local bằng
+`pytest tests/test_cp5.py -v`.
