@@ -164,6 +164,17 @@ class TestReadiness:
 
 
 class TestGracefulShutdown:
+    def test_cleanup_callbacks_duoc_goi_khi_close(self):
+        from app.lifecycle import Lifecycle
+
+        da_dong = []
+        life = Lifecycle()
+        life.register_cleanup(lambda: da_dong.append("redis"))
+
+        life.close()
+
+        assert da_dong == ["redis"]
+
     def test_nhan_tin_hieu_thi_bat_co(self):
         from app.lifecycle import Lifecycle
 

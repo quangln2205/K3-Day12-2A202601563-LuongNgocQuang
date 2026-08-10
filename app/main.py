@@ -41,17 +41,26 @@ SERVICE_VERSION = "1.0.0"
 # ─────────────────────────────────────────────────────────────
 @lru_cache(maxsize=1)
 def get_store() -> ConversationStore:
-    return ConversationStore(get_redis_client())
+    store = ConversationStore(get_redis_client())
+    lifecycle.register_cleanup(get_store.cache_clear)
+    lifecycle.register_cleanup(store.client.close)
+    return store
 
 
 @lru_cache(maxsize=1)
 def get_rate_limiter() -> RateLimiter:
-    return RateLimiter(get_redis_client(), get_settings().rate_limit_per_minute)
+    limiter = RateLimiter(get_redis_client(), get_settings().rate_limit_per_minute)
+    lifecycle.register_cleanup(get_rate_limiter.cache_clear)
+    lifecycle.register_cleanup(limiter.client.close)
+    return limiter
 
 
 @lru_cache(maxsize=1)
 def get_cost_guard() -> CostGuard:
-    return CostGuard(get_redis_client(), get_settings().monthly_budget_usd)
+    guard = CostGuard(get_redis_client(), get_settings().monthly_budget_usd)
+    lifecycle.register_cleanup(get_cost_guard.cache_clear)
+    lifecycle.register_cleanup(guard.client.close)
+    return guard
 
 
 @asynccontextmanager
@@ -60,6 +69,7 @@ async def lifespan(_app: FastAPI):
     lifecycle.install()
     log_event("service_started", service=SERVICE_NAME, version=SERVICE_VERSION)
     yield
+    lifecycle.close()
     log_event("service_stopped", service=SERVICE_NAME)
 
 
