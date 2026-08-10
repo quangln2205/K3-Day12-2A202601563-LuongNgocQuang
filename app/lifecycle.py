@@ -11,6 +11,7 @@ balancer ngừng đẩy traffic mới vào → xử lý nốt request đang ch�
 
 from __future__ import annotations
 
+from collections.abc import Callable
 import signal
 
 
@@ -21,6 +22,7 @@ class Lifecycle:
         self.shutting_down = False
         # Handler đã được đăng ký trước ta (của uvicorn) — xem install()
         self._previous: dict = {}
+        self._cleanup_callbacks: list[Callable[[], None]] = []
 
     def request_shutdown(self, signum=None, frame=None) -> None:
         """Signal handler: đánh dấu process đang tắt dần.
@@ -62,6 +64,20 @@ class Lifecycle:
         for sig in (signal.SIGTERM, signal.SIGINT):
             self._previous[sig] = signal.getsignal(sig)
             signal.signal(sig, self.request_shutdown)
+
+    def register_cleanup(self, callback: Callable[[], None]) -> None:
+        """Đăng ký một thao tác cleanup để chạy khi app tắt hẳn."""
+        self._cleanup_callbacks.append(callback)
+
+    def close(self) -> None:
+        """Chạy các cleanup callbacks theo thứ tự ngược lại khi khởi tạo."""
+        callbacks = self._cleanup_callbacks
+        self._cleanup_callbacks = []
+        for callback in reversed(callbacks):
+            try:
+                callback()
+            except Exception:
+                pass
 
 
 # Một instance dùng chung cho cả app
